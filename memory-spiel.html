@@ -523,14 +523,13 @@
             if (moves < 18) {
                 // Gewonnen! Geschenk wird enthüllt
                 giftIcon.textContent = '❤️';
-                giftMessage.textContent = '🎉 Herzlichen Glückwunsch! 🎉';
+                giftMessage.textContent = '🎉 Merry Christmas Gwaggli! 🎉';
                 giftMessage.classList.remove('fail');
                 giftDetails.innerHTML = `
-                    Dein Weihnachtsgeschenk ist:<br>
-                    <strong>✨ Gutschein für ein Langlaufset<br>im Wert von 300 CHF! ✨</strong><br>
+                    Dis Gschenk:<br>
+                    <strong>✨ 🎄Gutschein für Langlaufset<br>im Wert von 300 CHF! 🎄✨</strong><br>
                     <br>
-                    🎄 Frohe Weihnachten! 🎄<br>
-                    <small>(Geschafft in ${moves} Zügen - Unter 18! 🌟)</small>
+                
                 `;
             } else {
                 // Zu viele Züge
