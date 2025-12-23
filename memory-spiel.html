@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 Weihnachts-Memory 🎄</title>
+    <title>🎄 Gwaggli's Christmas Memory 🎄</title>
     <style>
         * {
             margin: 0;
@@ -159,6 +159,17 @@
             transform: rotateY(180deg);
             border: 3px solid #ffd700;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 10px;
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
         }
 
         .reset-btn {
@@ -253,6 +264,10 @@
             color: #ffd700;
         }
 
+        .gift-message.fail {
+            color: #ff6b6b;
+        }
+
         .gift-details {
             font-size: 1.5em;
             margin-bottom: 30px;
@@ -301,7 +316,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎄 Weihnachts-Memory 🎄</h1>
+        <h1>🎄 Gwaggli's Christmas Memory 🎄</h1>
         
         <div class="stats">
             <div>⏱️ Zeit: <span id="time">0</span>s</div>
@@ -317,9 +332,9 @@
     <!-- Geschenk-Enthüllung -->
     <div class="gift-reveal" id="giftReveal">
         <div class="gift-content">
-            <div class="gift-icon">🎁</div>
-            <div class="gift-message">🎉 Herzlichen Glückwunsch! 🎉</div>
-            <div class="gift-details">
+            <div class="gift-icon" id="giftIcon">🎁</div>
+            <div class="gift-message" id="giftMessage">🎉 Herzlichen Glückwunsch! 🎉</div>
+            <div class="gift-details" id="giftDetails">
                 Dein Weihnachtsgeschenk ist:<br>
                 <strong>✨ Ein Gutschein für einen gemütlichen<br>Weihnachtsabend mit Glühwein und Plätzchen! ✨</strong><br>
                 <br>
@@ -330,8 +345,17 @@
     </div>
 
     <script>
-        // Weihnachtliche Symbole für die Karten (8 Paare)
-        const symbols = ['🎅', '⛄', '🎄', '🎁', '⭐', '🔔', '🕯️', '🦌'];
+        // Weihnachtliche Bilder für die Karten (8 Paare)
+        const symbols = [
+            'images/bild1.svg',
+            'images/bild2.svg',
+            'images/bild3.svg',
+            'images/bild4.svg',
+            'images/bild5.svg',
+            'images/bild6.svg',
+            'images/bild7.svg',
+            'images/bild8.svg'
+        ];
         
         let cards = [];
         let flippedCards = [];
@@ -377,7 +401,7 @@
                 cardElement.dataset.id = card.id;
                 cardElement.innerHTML = `
                     <div class="card-front"></div>
-                    <div class="card-back">${card.symbol}</div>
+                    <div class="card-back"><img src="${card.symbol}" alt="Memory Card"></div>
                 `;
                 cardElement.addEventListener('click', () => flipCard(card.id));
                 gameBoard.appendChild(cardElement);
@@ -483,6 +507,36 @@
 
         // Geschenk-Enthüllung zeigen
         function showGiftReveal() {
+            const giftIcon = document.getElementById('giftIcon');
+            const giftMessage = document.getElementById('giftMessage');
+            const giftDetails = document.getElementById('giftDetails');
+            
+            if (moves < 18) {
+                // Gewonnen! Geschenk wird enthüllt
+                giftIcon.textContent = '🎁';
+                giftMessage.textContent = '🎉 Herzlichen Glückwunsch! 🎉';
+                giftMessage.classList.remove('fail');
+                giftDetails.innerHTML = `
+                    Dein Weihnachtsgeschenk ist:<br>
+                    <strong>✨ Ein Gutschein für einen gemütlichen<br>Weihnachtsabend mit Glühwein und Plätzchen! ✨</strong><br>
+                    <br>
+                    🎄 Frohe Weihnachten! 🎄<br>
+                    <small>(Geschafft in ${moves} Zügen - Unter 18! 🌟)</small>
+                `;
+            } else {
+                // Zu viele Züge
+                giftIcon.textContent = '🎄';
+                giftMessage.textContent = '😅 Fast geschafft!';
+                giftMessage.classList.add('fail');
+                giftDetails.innerHTML = `
+                    Du hast ${moves} Züge gebraucht.<br>
+                    <strong>Das Geschenk wird nur bei weniger als 18 Zügen enthüllt!</strong><br>
+                    <br>
+                    Versuch es nochmal! 💪<br>
+                    <small>Tipp: Merke dir die Positionen gut! 🧠</small>
+                `;
+            }
+            
             document.getElementById('giftReveal').classList.add('show');
         }
 
