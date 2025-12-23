@@ -155,14 +155,13 @@
         }
 
         .card-back {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            background: white;
             transform: rotateY(180deg);
             border: 3px solid #ffd700;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            padding: 10px;
+            border-radius: 15px;
+            overflow: hidden;
+            padding: 5px;
         }
 
         .card-back img {
@@ -170,6 +169,7 @@
             height: 100%;
             object-fit: cover;
             border-radius: 10px;
+            display: block;
         }
 
         .reset-btn {
@@ -347,14 +347,14 @@
     <script>
         // Weihnachtliche Bilder für die Karten (8 Paare)
         const symbols = [
-            'images/bild1.svg',
-            'images/bild2.svg',
-            'images/bild3.svg',
-            'images/bild4.svg',
-            'images/bild5.svg',
-            'images/bild6.svg',
-            'images/bild7.svg',
-            'images/bild8.svg'
+            'images/bild1.jpg',
+            'images/bild2.jpg',
+            'images/bild3.jpg',
+            'images/bild4.jpg',
+            'images/bild5.jpg',
+            'images/bild6.jpg',
+            'images/bild7.jpg',
+            'images/bild8.jpg'
         ];
         
         let cards = [];
@@ -401,7 +401,7 @@
                 cardElement.dataset.id = card.id;
                 cardElement.innerHTML = `
                     <div class="card-front"></div>
-                    <div class="card-back"><img src="${card.symbol}" alt="Memory Card"></div>
+                    <div class="card-back"><img src="${card.symbol}" alt="Memory Bild" loading="lazy"></div>
                 `;
                 cardElement.addEventListener('click', () => flipCard(card.id));
                 gameBoard.appendChild(cardElement);
