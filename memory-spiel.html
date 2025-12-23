@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎄 Gwaggli's Christmas Memory 🎄</title>
+    <!-- Preload Bilder für schnelleres Laden -->
+    <link rel="preload" as="image" href="images/bild1.jpeg">
+    <link rel="preload" as="image" href="images/bild2.jpeg">
+    <link rel="preload" as="image" href="images/bild3.jpeg">
+    <link rel="preload" as="image" href="images/bild4.jpeg">
+    <link rel="preload" as="image" href="images/bild5.jpeg">
+    <link rel="preload" as="image" href="images/bild6.jpeg">
+    <link rel="preload" as="image" href="images/bild7.jpeg">
+    <link rel="preload" as="image" href="images/bild8.JPG">
     <style>
         * {
             margin: 0;
@@ -170,6 +179,10 @@
             object-fit: cover;
             border-radius: 10px;
             display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            max-width: 150px;
+            max-height: 150px;
         }
 
         .reset-btn {
@@ -401,7 +414,7 @@
                 cardElement.dataset.id = card.id;
                 cardElement.innerHTML = `
                     <div class="card-front"></div>
-                    <div class="card-back"><img src="${card.symbol}" alt="Memory Bild" loading="lazy"></div>
+                    <div class="card-back"><img src="${card.symbol}" alt="Memory Bild" loading="eager" decoding="async"></div>
                 `;
                 cardElement.addEventListener('click', () => flipCard(card.id));
                 gameBoard.appendChild(cardElement);
