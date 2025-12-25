@@ -389,6 +389,7 @@
         <div class="game-board" id="gameBoard"></div>
 
         <button class="reset-btn" onclick="resetGame()">🔄 Neues Spiel</button>
+        <button class="reset-btn" onclick="testSuccessScreen()" style="background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); margin-left: 10px;">🧪 Test Success Screen</button>
     </div>
 
     <!-- Geschenk-Enthüllung -->
@@ -670,6 +671,14 @@
             stopTimer();
             closeGiftReveal();
             initGame();
+        }
+
+        // TEST-FUNKTION: Direkt zum Success Screen springen
+        function testSuccessScreen() {
+            // Setze temporär moves auf einen guten Wert
+            moves = 15;
+            updateStats();
+            showGiftReveal();
         }
 
         // Spiel beim Laden starten
