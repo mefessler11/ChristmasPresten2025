@@ -239,6 +239,8 @@
             gap: 5px;
             padding: 5px;
             z-index: 0;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .background-image {
@@ -594,17 +596,11 @@
 
         // Lade mehrere zufällige Hintergrundbilder für Geschenk-Enthüllung
         function loadRandomSuccessImages(count = 20) {
-            const images = [];
-            
             // Erstelle eine gemischte Kopie aller verfügbaren Bilder
             const shuffled = [...successImages].sort(() => Math.random() - 0.5);
             
-            // Fülle bis count erreicht ist (wiederhole falls nötig)
-            for (let i = 0; i < count; i++) {
-                images.push(shuffled[i % shuffled.length]);
-            }
-            
-            return images;
+            // Gib genau count Bilder zurück (genau 20 wenn genau 20 verfügbar sind)
+            return shuffled.slice(0, count);
         }
 
         // Geschenk-Enthüllung zeigen
