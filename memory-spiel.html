@@ -656,7 +656,12 @@
             if (!bgContainer) {
                 bgContainer = document.createElement('div');
                 bgContainer.className = 'background-images';
-                giftBilder für die Diashow (aber zeige sie noch nicht)
+                giftReveal.insertBefore(bgContainer, giftReveal.firstChild);
+            } else {
+                bgContainer.innerHTML = ''; // Leere vorherige Bilder
+            }
+            
+            // Lade Bilder für die Diashow (aber zeige sie noch nicht)
             slideshowImages = loadRandomSuccessImages(20);
             slideshowImages.forEach((imgSrc, index) => {
                 const img = document.createElement('img');
@@ -665,12 +670,7 @@
                 img.onerror = () => {
                     // Entferne Bild bei Fehler
                     console.warn('Bild konnte nicht geladen werden:', imgSrc);
-                    img.remove()
-                img.style.animationDelay = `${index * 0.05}s`; // Gestaffelte Animation
-                img.onerror = () => {
-                    // Entferne Bild bei Fehler
-                    console.warn('Bild konnte nicht geladen werden:', imgSrc);
-                    img.style.display = 'none';
+                    img.remove();
                 };
                 bgContainer.appendChild(img);
             });
@@ -703,8 +703,7 @@
             giftReveal.classList.add('show');
         }
 
-        // Geschenk-Enthüllung schließen
-        funDiashow starten
+        // Diashow starten
         function startSlideshow() {
             const bgContainer = document.querySelector('.background-images');
             const images = bgContainer.querySelectorAll('.background-image');
@@ -759,7 +758,8 @@
 
         // Geschenk-Enthüllung schließen
         function closeGiftReveal() {
-            stopSlideshow();'giftReveal').classList.remove('show');
+            stopSlideshow();
+            document.getElementById('giftReveal').classList.remove('show');
         }
 
         // Spiel zurücksetzen
