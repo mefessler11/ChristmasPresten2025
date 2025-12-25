@@ -213,6 +213,52 @@
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.5s ease;
+            overflow: hidden;
+        }
+
+        .gift-reveal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .background-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 5px;
+            padding: 5px;
+            z-index: 0;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: blur(2px);
+            animation: fadeInImage 1s ease forwards;
+        }
+
+        @keyframes fadeInImage {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 0.4;
+                transform: scale(1);
+            }
         }
 
         @keyframes fadeIn {
@@ -232,6 +278,13 @@
             text-align: center;
             color: white;
             animation: bounceIn 1s ease;
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         @keyframes bounceIn {
@@ -514,11 +567,70 @@
             }
         }
 
+        // Lade mehrere zufällige Hintergrundbilder für Geschenk-Enthüllung
+        async function loadRandomSuccessImages(count = 20) {
+            const images = [];
+            
+            try {
+                // Versuche Bilder aus dem success-images Ordner zu laden
+                const response = await fetch('success-images/');
+                if (response.ok) {
+                    const text = await response.text();
+                    // Extrahiere Bildnamen aus dem HTML (funktioniert mit Standard-Verzeichnis-Listings)
+                    const imageMatches = text.matchAll(/href="([^"]*\.(jpg|jpeg|png|gif|webp))"/gi);
+                    const availableImages = Array.from(imageMatches).map(m => 'success-images/' + m[1]);
+                    
+                    if (availableImages.length > 0) {
+                        // Wähle zufällige Bilder (mit Wiederholung, falls weniger als count verfügbar)
+                        for (let i = 0; i < count; i++) {
+                            const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+                            images.push(randomImage);
+                        }
+                        return images;
+                    }
+                }
+            } catch (error) {
+                console.log('Keine Hintergrundbilder gefunden oder Ordner nicht zugänglich');
+            }
+            
+            // Fallback: versuche nummerierte Bilder zu laden
+            for (let i = 0; i < count; i++) {
+                const imageNumber = Math.floor(Math.random() * 50) + 1; // 1-50
+                images.push(`success-images/bild${imageNumber}.jpg`);
+            }
+            return images;
+        }
+
         // Geschenk-Enthüllung zeigen
-        function showGiftReveal() {
+        async function showGiftReveal() {
             const giftIcon = document.getElementById('giftIcon');
             const giftMessage = document.getElementById('giftMessage');
             const giftDetails = document.getElementById('giftDetails');
+            const giftReveal = document.getElementById('giftReveal');
+            
+            // Erstelle Bilder-Container falls noch nicht vorhanden
+            let bgContainer = giftReveal.querySelector('.background-images');
+            if (!bgContainer) {
+                bgContainer = document.createElement('div');
+                bgContainer.className = 'background-images';
+                giftReveal.insertBefore(bgContainer, giftReveal.firstChild);
+            } else {
+                bgContainer.innerHTML = ''; // Leere vorherige Bilder
+            }
+            
+            // Lade und zeige mehrere Hintergrundbilder
+            const bgImages = await loadRandomSuccessImages(20);
+            bgImages.forEach((imgSrc, index) => {
+                const img = document.createElement('img');
+                img.className = 'background-image';
+                img.src = imgSrc;
+                img.style.animationDelay = `${index * 0.05}s`; // Gestaffelte Animation
+                img.onerror = () => {
+                    // Entferne Bild bei Fehler
+                    img.style.display = 'none';
+                };
+                bgContainer.appendChild(img);
+            });
             
             if (moves < 18) {
                 // Gewonnen! Geschenk wird enthüllt
@@ -545,7 +657,7 @@
                 `;
             }
             
-            document.getElementById('giftReveal').classList.add('show');
+            giftReveal.classList.add('show');
         }
 
         // Geschenk-Enthüllung schließen
