@@ -22,9 +22,13 @@ if command -v convert &> /dev/null; then
     
     # Zähle Bilder
     count=0
-    for img in success-images/*.{jpeg,jpg,JPG,JPEG,png,PNG,gif,GIF,webp,WEBP} 2>/dev/null; do
+    for img in success-images/*; do
         if [ -f "$img" ]; then
-            ((count++))
+            ext="${img##*.}"
+            ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+            if [[ "$ext_lower" == "jpeg" || "$ext_lower" == "jpg" || "$ext_lower" == "png" || "$ext_lower" == "gif" || "$ext_lower" == "webp" ]]; then
+                ((count++))
+            fi
         fi
     done
     
@@ -37,8 +41,14 @@ if command -v convert &> /dev/null; then
     echo "📊 Gefunden: $count Bilder"
     echo ""
     
-    for img in success-images/*.{jpeg,jpg,JPG,JPEG,png,PNG,gif,GIF,webp,WEBP} 2>/dev/null; do
+    for img in success-images/*; do
         if [ -f "$img" ]; then
+            ext="${img##*.}"
+            ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+            if [[ "$ext_lower" != "jpeg" && "$ext_lower" != "jpg" && "$ext_lower" != "png" && "$ext_lower" != "gif" && "$ext_lower" != "webp" ]]; then
+                continue
+            fi
+            
             filename=$(basename "$img")
             extension="${filename##*.}"
             basename="${filename%.*}"
@@ -83,9 +93,13 @@ elif command -v magick &> /dev/null; then
     
     # Zähle Bilder
     count=0
-    for img in success-images/*.{jpeg,jpg,JPG,JPEG,png,PNG,gif,GIF,webp,WEBP} 2>/dev/null; do
+    for img in success-images/*; do
         if [ -f "$img" ]; then
-            ((count++))
+            ext="${img##*.}"
+            ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+            if [[ "$ext_lower" == "jpeg" || "$ext_lower" == "jpg" || "$ext_lower" == "png" || "$ext_lower" == "gif" || "$ext_lower" == "webp" ]]; then
+                ((count++))
+            fi
         fi
     done
     
@@ -98,8 +112,14 @@ elif command -v magick &> /dev/null; then
     echo "📊 Gefunden: $count Bilder"
     echo ""
     
-    for img in success-images/*.{jpeg,jpg,JPG,JPEG,png,PNG,gif,GIF,webp,WEBP} 2>/dev/null; do
+    for img in success-images/*; do
         if [ -f "$img" ]; then
+            ext="${img##*.}"
+            ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+            if [[ "$ext_lower" != "jpeg" && "$ext_lower" != "jpg" && "$ext_lower" != "png" && "$ext_lower" != "gif" && "$ext_lower" != "webp" ]]; then
+                continue
+            fi
+            
             filename=$(basename "$img")
             extension="${filename##*.}"
             basename="${filename%.*}"

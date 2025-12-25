@@ -596,10 +596,12 @@
         function loadRandomSuccessImages(count = 20) {
             const images = [];
             
-            // Wähle zufällige Bilder (mit Wiederholung)
+            // Erstelle eine gemischte Kopie aller verfügbaren Bilder
+            const shuffled = [...successImages].sort(() => Math.random() - 0.5);
+            
+            // Fülle bis count erreicht ist (wiederhole falls nötig)
             for (let i = 0; i < count; i++) {
-                const randomImage = successImages[Math.floor(Math.random() * successImages.length)];
-                images.push(randomImage);
+                images.push(shuffled[i % shuffled.length]);
             }
             
             return images;
