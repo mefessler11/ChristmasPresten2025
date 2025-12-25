@@ -568,42 +568,45 @@
             }
         }
 
+        // Verfügbare Success-Bilder (direkt definiert für bessere Kompatibilität)
+        const successImages = [
+            'success-images/IMG_0041.jpeg',
+            'success-images/IMG_0058.JPG',
+            'success-images/IMG_0082.JPG',
+            'success-images/IMG_0257.jpeg',
+            'success-images/IMG_0303.jpeg',
+            'success-images/IMG_1946.jpeg',
+            'success-images/IMG_2474.jpeg',
+            'success-images/IMG_6271.jpeg',
+            'success-images/IMG_6274.jpeg',
+            'success-images/IMG_6786.jpeg',
+            'success-images/IMG_6891.JPG',
+            'success-images/IMG_6918.jpeg',
+            'success-images/bild1.jpeg',
+            'success-images/bild2.jpeg',
+            'success-images/bild3.jpeg',
+            'success-images/bild4.jpeg',
+            'success-images/bild5.jpeg',
+            'success-images/bild6.jpeg',
+            'success-images/bild7.jpeg',
+            'success-images/bild8.JPG'
+        ];
+
         // Lade mehrere zufällige Hintergrundbilder für Geschenk-Enthüllung
-        async function loadRandomSuccessImages(count = 20) {
+        function loadRandomSuccessImages(count = 20) {
             const images = [];
             
-            try {
-                // Versuche Bilder aus dem success-images Ordner zu laden
-                const response = await fetch('success-images/');
-                if (response.ok) {
-                    const text = await response.text();
-                    // Extrahiere Bildnamen aus dem HTML (funktioniert mit Standard-Verzeichnis-Listings)
-                    const imageMatches = text.matchAll(/href="([^"]*\.(jpg|jpeg|png|gif|webp))"/gi);
-                    const availableImages = Array.from(imageMatches).map(m => 'success-images/' + m[1]);
-                    
-                    if (availableImages.length > 0) {
-                        // Wähle zufällige Bilder (mit Wiederholung, falls weniger als count verfügbar)
-                        for (let i = 0; i < count; i++) {
-                            const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)];
-                            images.push(randomImage);
-                        }
-                        return images;
-                    }
-                }
-            } catch (error) {
-                console.log('Keine Hintergrundbilder gefunden oder Ordner nicht zugänglich');
+            // Wähle zufällige Bilder (mit Wiederholung)
+            for (let i = 0; i < count; i++) {
+                const randomImage = successImages[Math.floor(Math.random() * successImages.length)];
+                images.push(randomImage);
             }
             
-            // Fallback: versuche nummerierte Bilder zu laden
-            for (let i = 0; i < count; i++) {
-                const imageNumber = Math.floor(Math.random() * 50) + 1; // 1-50
-                images.push(`success-images/bild${imageNumber}.jpg`);
-            }
             return images;
         }
 
         // Geschenk-Enthüllung zeigen
-        async function showGiftReveal() {
+        function showGiftReveal() {
             const giftIcon = document.getElementById('giftIcon');
             const giftMessage = document.getElementById('giftMessage');
             const giftDetails = document.getElementById('giftDetails');
@@ -620,7 +623,7 @@
             }
             
             // Lade und zeige mehrere Hintergrundbilder
-            const bgImages = await loadRandomSuccessImages(20);
+            const bgImages = loadRandomSuccessImages(20);
             bgImages.forEach((imgSrc, index) => {
                 const img = document.createElement('img');
                 img.className = 'background-image';
@@ -628,6 +631,7 @@
                 img.style.animationDelay = `${index * 0.05}s`; // Gestaffelte Animation
                 img.onerror = () => {
                     // Entferne Bild bei Fehler
+                    console.warn('Bild konnte nicht geladen werden:', imgSrc);
                     img.style.display = 'none';
                 };
                 bgContainer.appendChild(img);
