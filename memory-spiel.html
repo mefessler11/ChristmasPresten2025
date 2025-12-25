@@ -233,23 +233,30 @@
             left: 0;
             width: 100%;
             height: 100%;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 5px;
-            padding: 5px;
+            display: none;
+            justify-content: center;
+            align-items: center;
             z-index: 0;
             overflow: hidden;
             box-sizing: border-box;
         }
 
+        .background-images.slideshow-active {
+            display: flex;
+        }
+
         .background-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.7;
-            filter: blur(1px);
-            animation: fadeInImage 1s ease forwards;
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .background-image.active {
+            opacity: 1;
+            z-index: 1;
         }
 
         @keyframes fadeInImage {
@@ -258,7 +265,7 @@
                 transform: scale(0.8);
             }
             to {
-                opacity: 0.7;
+                opacity: 1;
                 transform: scale(1);
             }
         }
@@ -349,11 +356,38 @@
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
             font-weight: bold;
+            margin: 10px;
         }
 
         .close-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.8);
+        }
+
+        .highlights-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+            color: white;
+            border: 3px solid #ffd700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .highlights-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         @media (max-width: 600px) {
@@ -404,7 +438,10 @@
                 <br>
                 🎄 Frohe Weihnachten! 🎄
             </div>
-            <button class="close-btn" onclick="closeGiftReveal()">Weiterspielen</button>
+            <div class="button-container">
+                <button class="highlights-btn" id="highlightsBtn" onclick="startSlideshow()">🎄 2025 Highlights</button>
+                <button class="close-btn" onclick="closeGiftReveal()">Weiterspielen</button>
+            </div>
         </div>
     </div>
 
@@ -602,6 +639,11 @@
             return shuffled.slice(0, count);
         }
 
+        // Diashow-Variablen
+        let slideshowInterval = null;
+        let currentSlideIndex = 0;
+        let slideshowImages = [];
+
         // Geschenk-Enthüllung zeigen
         function showGiftReveal() {
             const giftIcon = document.getElementById('giftIcon');
@@ -614,17 +656,16 @@
             if (!bgContainer) {
                 bgContainer = document.createElement('div');
                 bgContainer.className = 'background-images';
-                giftReveal.insertBefore(bgContainer, giftReveal.firstChild);
-            } else {
-                bgContainer.innerHTML = ''; // Leere vorherige Bilder
-            }
-            
-            // Lade und zeige mehrere Hintergrundbilder
-            const bgImages = loadRandomSuccessImages(20);
-            bgImages.forEach((imgSrc, index) => {
+                giftBilder für die Diashow (aber zeige sie noch nicht)
+            slideshowImages = loadRandomSuccessImages(20);
+            slideshowImages.forEach((imgSrc, index) => {
                 const img = document.createElement('img');
                 img.className = 'background-image';
                 img.src = imgSrc;
+                img.onerror = () => {
+                    // Entferne Bild bei Fehler
+                    console.warn('Bild konnte nicht geladen werden:', imgSrc);
+                    img.remove()
                 img.style.animationDelay = `${index * 0.05}s`; // Gestaffelte Animation
                 img.onerror = () => {
                     // Entferne Bild bei Fehler
@@ -663,8 +704,62 @@
         }
 
         // Geschenk-Enthüllung schließen
+        funDiashow starten
+        function startSlideshow() {
+            const bgContainer = document.querySelector('.background-images');
+            const images = bgContainer.querySelectorAll('.background-image');
+            
+            if (images.length === 0) return;
+            
+            // Verstecke den Highlights-Button
+            document.getElementById('highlightsBtn').style.display = 'none';
+            
+            // Zeige Bilder-Container
+            bgContainer.classList.add('slideshow-active');
+            
+            // Starte mit erstem Bild
+            currentSlideIndex = 0;
+            images[currentSlideIndex].classList.add('active');
+            
+            // Starte Diashow (alle 2.5 Sekunden wechseln)
+            slideshowInterval = setInterval(() => {
+                // Entferne 'active' vom aktuellen Bild
+                images[currentSlideIndex].classList.remove('active');
+                
+                // Nächstes Bild
+                currentSlideIndex = (currentSlideIndex + 1) % images.length;
+                
+                // Füge 'active' zum nächsten Bild hinzu
+                images[currentSlideIndex].classList.add('active');
+            }, 2500); // 2.5 Sekunden pro Bild
+        }
+
+        // Diashow stoppen
+        function stopSlideshow() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+            
+            const bgContainer = document.querySelector('.background-images');
+            if (bgContainer) {
+                bgContainer.classList.remove('slideshow-active');
+                const images = bgContainer.querySelectorAll('.background-image');
+                images.forEach(img => img.classList.remove('active'));
+            }
+            
+            // Zeige Highlights-Button wieder
+            const highlightsBtn = document.getElementById('highlightsBtn');
+            if (highlightsBtn) {
+                highlightsBtn.style.display = 'inline-block';
+            }
+            
+            currentSlideIndex = 0;
+        }
+
+        // Geschenk-Enthüllung schließen
         function closeGiftReveal() {
-            document.getElementById('giftReveal').classList.remove('show');
+            stopSlideshow();'giftReveal').classList.remove('show');
         }
 
         // Spiel zurücksetzen
